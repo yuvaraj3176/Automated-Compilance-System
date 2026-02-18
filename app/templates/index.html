@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row align-items-center min-vh-75 py-5">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold mb-4">
+                Automated Compliance Monitoring
+                <span class="text-primary">Made Simple</span>
+            </h1>
+            <p class="lead mb-4">
+                Automate your compliance checks, analyze logs in real-time, and ensure regulatory compliance with our intelligent monitoring system.
+            </p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                        <i class="bi bi-speedometer2"></i> Go to Dashboard
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                        <i class="bi bi-person-plus"></i> Get Started
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <img src="https://via.placeholder.com/600x400" alt="Compliance Monitoring" class="img-fluid rounded shadow">
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-4 py-5">
+        <h2 class="text-center mb-5">Key Features</h2>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3">
+                        <i class="bi bi-shield-check fs-1"></i>
+                    </div>
+                    <h5 class="card-title">Rule-Based Compliance</h5>
+                    <p class="card-text text-muted">
+                        Create custom compliance rules with multiple rule types including data quality, security, and access control.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-success bg-gradient text-white rounded-circle mb-3">
+                        <i class="bi bi-file-earmark-text fs-1"></i>
+                    </div>
+                    <h5 class="card-title">Log Analysis</h5>
+                    <p class="card-text text-muted">
+                        Upload and analyze log files for security issues, errors, and compliance violations in real-time.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon bg-info bg-gradient text-white rounded-circle mb-3">
+                        <i class="bi bi-graph-up fs-1"></i>
+                    </div>
+                    <h5 class="card-title">Comprehensive Reports</h5>
+                    <p class="card-text text-muted">
+                        Generate detailed compliance reports with insights, trends, and actionable recommendations.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="row py-5">
+        <h2 class="text-center mb-5">How It Works</h2>
+        
+        <div class="col-md-3">
+            <div class="text-center">
+                <div class="step-number bg-primary text-white rounded-circle mb-3">1</div>
+                <h5>Create Rules</h5>
+                <p class="text-muted">Define compliance rules based on your requirements</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="text-center">
+                <div class="step-number bg-primary text-white rounded-circle mb-3">2</div>
+                <h5>Run Checks</h5>
+                <p class="text-muted">Execute automated compliance checks against your data</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="text-center">
+                <div class="step-number bg-primary text-white rounded-circle mb-3">3</div>
+                <h5>Analyze Logs</h5>
+                <p class="text-muted">Upload and analyze system logs for potential issues</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="text-center">
+                <div class="step-number bg-primary text-white rounded-circle mb-3">4</div>
+                <h5>Get Reports</h5>
+                <p class="text-muted">Review comprehensive compliance reports and take action</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.min-vh-75 {
+    min-height: 75vh;
+}
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+.step-number {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+</style>
+{% endblock %}

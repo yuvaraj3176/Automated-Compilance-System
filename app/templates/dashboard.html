@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4 mb-4">Dashboard</h1>
+    
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Total Checks</h6>
+                            <h2 class="mb-0">{{ total_checks }}</h2>
+                        </div>
+                        <i class="bi bi-check-circle fs-1"></i>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{{ url_for('compliance.checks') }}">View Details</a>
+                    <i class="bi bi-chevron-right text-white"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Passed</h6>
+                            <h2 class="mb-0">{{ passed_checks }}</h2>
+                        </div>
+                        <i class="bi bi-check-circle-fill fs-1"></i>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <span class="small text-white">Success Rate: {{ "%.1f"|format((passed_checks/total_checks*100) if total_checks > 0 else 0) }}%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Failed</h6>
+                            <h2 class="mb-0">{{ failed_checks }}</h2>
+                        </div>
+                        <i class="bi bi-exclamation-triangle-fill fs-1"></i>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <span class="small text-white">Need Attention</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1">Active Rules</h6>
+                            <h2 class="mb-0">{{ total_rules }}</h2>
+                        </div>
+                        <i class="bi bi-list-check fs-1"></i>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{{ url_for('compliance.rules') }}">View Rules</a>
+                    <i class="bi bi-chevron-right text-white"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-xl-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <i class="bi bi-pie-chart me-1"></i>
+                    Compliance Status Overview
+                </div>
+                <div class="card-body">
+                    <canvas id="complianceChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <i class="bi bi-bar-chart me-1"></i>
+                    Recent Activity
+                </div>
+                <div class="card-body">
+                    <canvas id="activityChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity Tables -->
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <i class="bi bi-clock-history me-1"></i>
+                    Recent Compliance Checks
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for check in recent_checks %}
+                                <tr>
+                                    <td>{{ check.name }}</td>
+                                    <td>
+                                        {% if check.status == 'passed' %}
+                                            <span class="badge bg-success">Passed</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Failed</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ check.checked_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('compliance.view_check', check_id=check.id) }}" class="btn btn-sm btn-outline-primary">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No compliance checks yet</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <i class="bi bi-list-check me-1"></i>
+                    Recent Rules
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rule in recent_rules %}
+                                <tr>
+                                    <td>{{ rule.name }}</td>
+                                    <td>{{ rule.rule_type|replace('_', ' ')|title }}</td>
+                                    <td>
+                                        {% if rule.severity == 'critical' %}
+                                            <span class="badge bg-danger">Critical</span>
+                                        {% elif rule.severity == 'high' %}
+                                            <span class="badge bg-warning">High</span>
+                                        {% elif rule.severity == 'medium' %}
+                                            <span class="badge bg-info">Medium</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Low</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if rule.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No rules created yet</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Compliance Chart
+    var ctx1 = document.getElementById('complianceChart').getContext('2d');
+    var complianceChart = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+            labels: ['Passed ({{ passed_checks }})', 'Failed ({{ failed_checks }})'],
+            datasets: [{
+                data: [{{ passed_checks }}, {{ failed_checks }}],
+                backgroundColor: ['#28a745', '#dc3545'],
+                hoverBackgroundColor: ['#34ce57', '#e4606d']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+    
+    // Activity Chart
+    var ctx2 = document.getElementById('activityChart').getContext('2d');
+    var activityChart = new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Compliance Checks',
+                data: [12, 19, 15, 17, 24, 10, 8],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0,123,255,0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+});
+</script>
+{% endblock %}
